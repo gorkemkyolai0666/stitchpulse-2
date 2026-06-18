@@ -13,31 +13,31 @@ import {
   formatCurrency,
   formatDateTime,
   formatPercent,
-  formatJobStatus,
+  formatOrderStatus,
   formatEquipmentMaintenanceStatus,
   formatEquipmentMaintenancePriority,
-  formatWorkstationSpecialty,
-  formatJobType,
+  formatWorkBenchSpecialty,
+  formatOrderType,
 } from '@/lib/utils';
 
 interface DashboardStats {
-  totalWorkstations: number;
-  availableWorkstations: number;
-  inUseWorkstations: number;
-  workstationUtilizationRate: number;
+  totalWorkBenches: number;
+  availableWorkBenches: number;
+  inUseWorkBenches: number;
+  workBenchUtilizationRate: number;
   openEquipmentMaintenance: number;
   urgentEquipmentMaintenance: number;
   pendingQualityChecklist: number;
   dailyRevenue: number;
-  recentJobs: Array<{
+  recentOrders: Array<{
     id: string;
     cashAmount: number;
     cardAmount: number;
     rushFee: number;
     dueAt: string;
-    jobType?: string;
+    orderType?: string;
     status: string;
-    workstation?: { name: string; zone: string; specialty: string };
+    workBench?: { name: string; zone: string; specialty: string };
   }>;
   recentEquipmentMaintenance: Array<{
     id: string;
@@ -45,9 +45,9 @@ interface DashboardStats {
     priority: string;
     status: string;
     reportedAt: string;
-    workstation?: { name: string; zone: string };
+    workBench?: { name: string; zone: string };
   }>;
-  shopZones: Array<{ zone: string; workstationCount: number }>;
+  shopZones: Array<{ zone: string; workBenchCount: number }>;
   monthlyTrend: Array<{ month: string; games: number; revenue: number }>;
 }
 
@@ -83,7 +83,7 @@ export default function DashboardPage() {
       <div className="space-y-6">
         <div>
           <h1 className="font-display text-3xl text-primary">Operasyon Paneli</h1>
-          <p className="text-muted-foreground">Oda kullanımı ve günlük gelir özeti</p>
+          <p className="text-muted-foreground">Tezgah kullanımı ve günlük gelir özeti</p>
         </div>
 
         {loading && <LoadingSpinner />}
@@ -92,15 +92,15 @@ export default function DashboardPage() {
           <>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <StatCard
-                title="Oda Kullanımı"
-                value={formatPercent(stats.workstationUtilizationRate)}
-                description={`${stats.availableWorkstations}/${stats.totalWorkstations} oda müsait`}
+                title="Tezgah Kullanımı"
+                value={formatPercent(stats.workBenchUtilizationRate)}
+                description={`${stats.availableWorkBenches}/${stats.totalWorkBenches} tezgah müsait`}
                 icon={<CircleDot className="h-4 w-4" />}
               />
               <StatCard
                 title="Günlük Gelir"
                 value={formatCurrency(stats.dailyRevenue)}
-                description={`${stats.inUseWorkstations} oda oyunda`}
+                description={`${stats.inUseWorkBenches} tezgah aktif`}
                 icon={<DollarSign className="h-4 w-4" />}
               />
               <StatCard
@@ -117,7 +117,7 @@ export default function DashboardPage() {
               />
             </div>
 
-            <Card className="atelier-card">
+            <Card className="gallery-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-display text-lg">
                   <Users className="h-4 w-4 text-accent" />
@@ -125,19 +125,19 @@ export default function DashboardPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {stats.recentJobs.length === 0 ? (
+                {stats.recentOrders.length === 0 ? (
                   <p className="text-sm text-muted-foreground">Henüz oturum kaydı yok.</p>
                 ) : (
                   <div className="space-y-3">
-                    {stats.recentJobs.map((session) => (
+                    {stats.recentOrders.map((session) => (
                       <div
                         key={session.id}
                         className="flex flex-wrap items-center justify-between gap-2 bg-muted/40 px-4 py-3"
                       >
                         <div>
-                          <p className="font-semibold">{session.workstation?.name || '—'}</p>
+                          <p className="font-semibold">{session.workBench?.name || '—'}</p>
                           <p className="text-xs text-muted-foreground">
-                            {session.workstation?.zone} · {formatWorkstationSpecialty(session.workstation?.specialty || '')} · {formatJobType(session.jobType || '')}
+                            {session.workBench?.zone} · {formatWorkBenchSpecialty(session.workBench?.specialty || '')} · {formatOrderType(session.orderType || '')}
                           </p>
                         </div>
                         <div className="text-right">
@@ -148,7 +148,7 @@ export default function DashboardPage() {
                           </p>
                           <p className="text-xs text-muted-foreground">{formatDateTime(session.dueAt)}</p>
                         </div>
-                        <Badge variant="secondary">{formatJobStatus(session.status)}</Badge>
+                        <Badge variant="secondary">{formatOrderStatus(session.status)}</Badge>
                       </div>
                     ))}
                   </div>
@@ -156,7 +156,7 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            <Card className="atelier-card">
+            <Card className="gallery-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-display text-lg">
                   <AlertTriangle className="h-4 w-4 text-destructive" />
@@ -172,7 +172,7 @@ export default function DashboardPage() {
                       <div key={item.id} className="bg-muted/40 px-4 py-3">
                         <p className="font-semibold">{item.title}</p>
                         <p className="text-xs text-muted-foreground">
-                          {item.workstation?.name || 'İstasyon belirtilmemiş'} · {item.workstation?.zone} · {formatEquipmentMaintenancePriority(item.priority)} ·{' '}
+                          {item.workBench?.name || 'İstasyon belirtilmemiş'} · {item.workBench?.zone} · {formatEquipmentMaintenancePriority(item.priority)} ·{' '}
                           {formatEquipmentMaintenanceStatus(item.status)}
                         </p>
                       </div>
@@ -183,7 +183,7 @@ export default function DashboardPage() {
             </Card>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <Card className="atelier-card">
+              <Card className="gallery-card">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 font-display text-lg">
                     <TrendingUp className="h-4 w-4 text-accent" />
@@ -200,7 +200,7 @@ export default function DashboardPage() {
                 </CardContent>
               </Card>
 
-              <Card className="atelier-card">
+              <Card className="gallery-card">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 font-display text-lg">
                     <CircleDot className="h-4 w-4 text-accent" />
@@ -211,7 +211,7 @@ export default function DashboardPage() {
                   {stats.shopZones.map((w) => (
                     <div key={w.zone} className="flex justify-between text-sm">
                       <span>{w.zone}</span>
-                      <Badge variant="secondary">{w.workstationCount} oda</Badge>
+                      <Badge variant="secondary">{w.workBenchCount} oda</Badge>
                     </div>
                   ))}
                 </CardContent>

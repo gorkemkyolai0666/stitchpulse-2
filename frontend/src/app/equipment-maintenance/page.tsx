@@ -17,7 +17,7 @@ import {
   formatEquipmentMaintenancePriority,
 } from '@/lib/utils';
 
-interface WorkstationOption {
+interface WorkBenchOption {
   id: string;
   name: string;
   zone: string;
@@ -30,7 +30,7 @@ interface EquipmentMaintenanceItem {
   priority: string;
   status: string;
   reportedAt: string;
-  workstation?: { name: string; zone: string };
+  workBench?: { name: string; zone: string };
 }
 
 interface ListResponse {
@@ -42,7 +42,7 @@ const PRIORITIES = ['low', 'medium', 'high', 'urgent'];
 const STATUSES = ['open', 'in_progress', 'completed', 'cancelled'];
 
 const emptyForm = {
-  workstationId: '',
+  workBenchId: '',
   title: '',
   description: '',
   priority: 'medium',
@@ -52,7 +52,7 @@ const emptyForm = {
 export default function EquipmentMaintenancePage() {
   const { token } = useAuth();
   const [items, setItems] = useState<EquipmentMaintenanceItem[]>([]);
-  const [workstations, setWorkstations] = useState<WorkstationOption[]>([]);
+  const [workBenches, setWorkBenches] = useState<WorkBenchOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -63,11 +63,11 @@ export default function EquipmentMaintenancePage() {
     if (!token) return;
     setLoading(true);
     setError(false);
-    Promise.all([api.equipmentMaintenance.list(token), api.workstations.list(token)])
+    Promise.all([api.equipmentMaintenance.list(token), api.workBenches.list(token)])
       .then(([itemsRes, roomsRes]) => {
         setItems((itemsRes as ListResponse).data);
-        setWorkstations(
-          ((roomsRes as { data: WorkstationOption[] }).data || []).map((r) => ({
+        setWorkBenches(
+          ((roomsRes as { data: WorkBenchOption[] }).data || []).map((r) => ({
             id: r.id,
             name: r.name,
             zone: r.zone,
@@ -88,7 +88,7 @@ export default function EquipmentMaintenancePage() {
     setSubmitting(true);
     try {
       await api.equipmentMaintenance.create(token, {
-        workstationId: form.workstationId,
+        workBenchId: form.workBenchId,
         title: form.title,
         description: form.description || undefined,
         priority: form.priority,
@@ -114,30 +114,30 @@ export default function EquipmentMaintenancePage() {
             <h1 className="font-display text-3xl text-primary">Ekipman Bakımı</h1>
             <p className="text-muted-foreground">Kilit, mekanizma ve prop arıza kayıtları</p>
           </div>
-          <Button onClick={() => setShowForm(!showForm)} className="atelier-btn">
+          <Button onClick={() => setShowForm(!showForm)} className="gallery-btn">
             <Plus className="mr-2 h-4 w-4" />
             {showForm ? 'İptal' : 'Yeni Kayıt'}
           </Button>
         </div>
 
         {showForm && (
-          <Card className="atelier-card">
+          <Card className="gallery-card">
             <CardHeader>
               <CardTitle className="font-display">Bakım Kaydı Ekle</CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleCreate} className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2 sm:col-span-2">
-                  <Label htmlFor="workstationId">Terzi Atölyesi</Label>
+                  <Label htmlFor="workBenchId">Tezgah</Label>
                   <select
-                    id="workstationId"
-                    value={form.workstationId}
-                    onChange={(e) => update('workstationId', e.target.value)}
+                    id="workBenchId"
+                    value={form.workBenchId}
+                    onChange={(e) => update('workBenchId', e.target.value)}
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                     required
                   >
                     <option value="">Oda seçin</option>
-                    {workstations.map((r) => (
+                    {workBenches.map((r) => (
                       <option key={r.id} value={r.id}>
                         {r.name} — {r.zone}
                       </option>
@@ -169,7 +169,7 @@ export default function EquipmentMaintenancePage() {
                   </select>
                 </div>
                 <div className="sm:col-span-2">
-                  <Button type="submit" disabled={submitting} className="atelier-btn">
+                  <Button type="submit" disabled={submitting} className="gallery-btn">
                     {submitting ? 'Kaydediliyor...' : 'Kaydet'}
                   </Button>
                 </div>
@@ -186,14 +186,14 @@ export default function EquipmentMaintenancePage() {
         {!loading && items.length > 0 && (
           <div className="space-y-3">
             {items.map((item) => (
-              <Card key={item.id} className="atelier-card">
+              <Card key={item.id} className="gallery-card">
                 <CardContent className="flex items-center justify-between p-4">
                   <div className="flex items-center gap-3">
                     <Puzzle className="h-5 w-5 text-accent" />
                     <div>
                       <p className="font-semibold">{item.title}</p>
                       <p className="text-xs text-muted-foreground">
-                        {item.workstation?.name || 'İstasyon belirtilmemiş'} · {item.workstation?.zone} · {formatEquipmentMaintenancePriority(item.priority)} · {formatDateTime(item.reportedAt)}
+                        {item.workBench?.name || 'İstasyon belirtilmemiş'} · {item.workBench?.zone} · {formatEquipmentMaintenancePriority(item.priority)} · {formatDateTime(item.reportedAt)}
                       </p>
                     </div>
                   </div>

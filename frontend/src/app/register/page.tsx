@@ -18,7 +18,7 @@ export default function RegisterPage() {
     password: '',
     firstName: '',
     lastName: '',
-    tailoringShopName: '',
+    framingShopName: '',
     phone: '',
     city: '',
     state: '',
@@ -51,9 +51,9 @@ export default function RegisterPage() {
         <h1 className="font-display text-3xl text-primary">Tesis Kaydı</h1>
       </div>
 
-      <Card className="atelier-card w-full max-w-lg">
+      <Card className="gallery-card w-full max-w-lg">
         <CardHeader>
-          <CardTitle className="font-display text-2xl">Yeni Terzi Atölyesi Tesisi Oluştur</CardTitle>
+          <CardTitle className="font-display text-2xl">Yeni Çerçeve Atölyesi Oluştur</CardTitle>
           <CardDescription>14 gün ücretsiz deneme ile başlayın</CardDescription>
         </CardHeader>
         <CardContent>
@@ -74,13 +74,13 @@ export default function RegisterPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="tailoringShopName">Tesis Adı</Label>
+              <Label htmlFor="framingShopName">Tesis Adı</Label>
               <Input
-                id="tailoringShopName"
-                value={form.tailoringShopName}
-                onChange={(e) => update('tailoringShopName', e.target.value)}
+                id="framingShopName"
+                value={form.framingShopName}
+                onChange={(e) => update('framingShopName', e.target.value)}
                 required
-                placeholder="Heritage Tailors & Alterations"
+                placeholder="Gallery Frames & Fine Art"
               />
             </div>
             <div className="space-y-2">
@@ -112,7 +112,7 @@ export default function RegisterPage() {
                 <Input id="phone" value={form.phone} onChange={(e) => update('phone', e.target.value)} />
               </div>
             </div>
-            <Button type="submit" className="atelier-btn w-full" disabled={loading}>
+            <Button type="submit" className="gallery-btn w-full" disabled={loading}>
               {loading ? 'Kayıt yapılıyor...' : 'Kayıt Ol'}
             </Button>
           </form>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Plus, ClipboardCheck } from 'lucide-react';
+import { Plus, Package } from 'lucide-react';
 import { AppLayout } from '@/components/app-layout';
 import { LoadingSpinner, ErrorState, EmptyState } from '@/components/states';
 import { Button } from '@/components/ui/button';
@@ -11,42 +11,35 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/lib/auth-context';
 import { api } from '@/lib/api';
-import {
-  formatDateTime,
-  formatQualityChecklistStatus,
-  formatQualityChecklistCategory,
-} from '@/lib/utils';
+import { formatMouldingOrderStatus, formatCurrency } from '@/lib/utils';
 
-interface QualityChecklistItem {
+interface MouldingOrderItem {
   id: string;
-  title: string;
-  description?: string;
-  category: string;
-  zone?: string;
-  scheduledAt: string;
+  customerName: string;
+  mouldingProfile: string;
+  supplierName?: string;
   status: string;
+  price: number;
 }
 
 interface ListResponse {
-  data: QualityChecklistItem[];
+  data: MouldingOrderItem[];
   total: number;
 }
 
-const CATEGORIES = ['full_reset', 'prop_check', 'clue_refresh', 'lock_repair', 'lighting', 'other'];
-const STATUSES = ['scheduled', 'in_progress', 'completed', 'overdue'];
+const STATUSES = ['pending', 'in_progress', 'completed', 'delivered'];
 
 const emptyForm = {
-  title: '',
-  description: '',
-  category: 'full_reset',
-  zone: '',
-  scheduledAt: new Date().toISOString().slice(0, 16),
-  status: 'scheduled',
+  customerName: '',
+  mouldingProfile: '',
+  supplierName: '',
+  status: 'pending',
+  price: '0',
 };
 
-export default function QualityChecklistPage() {
+export default function MouldingOrdersPage() {
   const { token } = useAuth();
-  const [items, setItems] = useState<QualityChecklistItem[]>([]);
+  const [items, setItems] = useState<MouldingOrderItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -57,7 +50,7 @@ export default function QualityChecklistPage() {
     if (!token) return;
     setLoading(true);
     setError(false);
-    api.qualityChecklist
+    api.mouldingOrders
       .list(token)
       .then((res) => setItems((res as ListResponse).data))
       .catch(() => setError(true))
@@ -73,13 +66,12 @@ export default function QualityChecklistPage() {
     if (!token) return;
     setSubmitting(true);
     try {
-      await api.qualityChecklist.create(token, {
-        title: form.title,
-        description: form.description || undefined,
-        category: form.category,
-        zone: form.zone || undefined,
-        scheduledAt: form.scheduledAt,
+      await api.mouldingOrders.create(token, {
+        customerName: form.customerName,
+        mouldingProfile: form.mouldingProfile,
+        supplierName: form.supplierName || undefined,
         status: form.status,
+        price: parseFloat(form.price),
       });
       setForm(emptyForm);
       setShowForm(false);
@@ -98,51 +90,43 @@ export default function QualityChecklistPage() {
       <div className="space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="font-display text-3xl text-primary">Kalite Kontrol Kontrol Listeleri</h1>
-            <p className="text-muted-foreground">Oda sıfırlama, prop kontrolü ve ipucu yenileme planları</p>
+            <h1 className="font-display text-3xl text-primary">Kumaş Siparişleri</h1>
+            <p className="text-muted-foreground">Kilit, mekanizma ve dekor sipariş takibi</p>
           </div>
           <Button onClick={() => setShowForm(!showForm)} className="gallery-btn">
             <Plus className="mr-2 h-4 w-4" />
-            {showForm ? 'İptal' : 'Yeni Plan'}
+            {showForm ? 'İptal' : 'Yeni Sipariş'}
           </Button>
         </div>
 
         {showForm && (
           <Card className="gallery-card">
             <CardHeader>
-              <CardTitle className="font-display">Kalite Kontrol Planı Ekle</CardTitle>
+              <CardTitle className="font-display">Kumaş Siparişi Ekle</CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleCreate} className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="customerName">Müşteri / Talep Eden</Label>
+                  <Input id="customerName" value={form.customerName} onChange={(e) => update('customerName', e.target.value)} required placeholder="Örn: Escape Props Co." />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="supplierName">Tedarikçi</Label>
+                  <Input id="supplierName" value={form.supplierName} onChange={(e) => update('supplierName', e.target.value)} placeholder="Örn: PuzzleCraft Supply" />
+                </div>
                 <div className="space-y-2 sm:col-span-2">
-                  <Label htmlFor="title">Başlık</Label>
-                  <Input id="title" value={form.title} onChange={(e) => update('title', e.target.value)} required placeholder="Örn: Tam sıfırlama — Starship Bridge" />
-                </div>
-                <div className="space-y-2 sm:col-span-2">
-                  <Label htmlFor="description">Açıklama</Label>
-                  <Input id="description" value={form.description} onChange={(e) => update('description', e.target.value)} />
+                  <Label htmlFor="mouldingProfile">Kumaş Kategorisi</Label>
+                  <Input id="mouldingProfile" value={form.mouldingProfile} onChange={(e) => update('mouldingProfile', e.target.value)} required placeholder="Örn: İpek Saten Set" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="category">Kategori</Label>
-                  <select id="category" value={form.category} onChange={(e) => update('category', e.target.value)} className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
-                    {CATEGORIES.map((c) => (
-                      <option key={c} value={c}>{formatQualityChecklistCategory(c)}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="zone">Kanat / Bölüm</Label>
-                  <Input id="zone" value={form.zone} onChange={(e) => update('zone', e.target.value)} placeholder="Örn: Basement Zone" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="scheduledAt">Planlanan Tarih</Label>
-                  <Input id="scheduledAt" type="datetime-local" value={form.scheduledAt} onChange={(e) => update('scheduledAt', e.target.value)} required />
+                  <Label htmlFor="price">Tarife ($)</Label>
+                  <Input id="price" type="number" min={0} step="0.01" value={form.price} onChange={(e) => update('price', e.target.value)} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="status">Durum</Label>
                   <select id="status" value={form.status} onChange={(e) => update('status', e.target.value)} className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
                     {STATUSES.map((s) => (
-                      <option key={s} value={s}>{formatQualityChecklistStatus(s)}</option>
+                      <option key={s} value={s}>{formatMouldingOrderStatus(s)}</option>
                     ))}
                   </select>
                 </div>
@@ -159,23 +143,23 @@ export default function QualityChecklistPage() {
         {loading && <LoadingSpinner />}
         {error && !loading && items.length === 0 && <ErrorState onRetry={load} />}
         {!loading && !error && items.length === 0 && (
-          <EmptyState title="Kalite Kontrol planı yok" description="Henüz sıfırlama kontrol listesi eklenmemiş." />
+          <EmptyState title="Sipariş bulunamadı" description="Henüz prop siparişi eklenmemiş." />
         )}
         {!loading && items.length > 0 && (
-          <div className="space-y-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             {items.map((item) => (
               <Card key={item.id} className="gallery-card">
                 <CardContent className="flex items-center justify-between p-4">
                   <div className="flex items-center gap-3">
-                    <ClipboardCheck className="h-5 w-5 text-accent" />
+                    <Package className="h-5 w-5 text-accent" />
                     <div>
-                      <p className="font-semibold">{item.title}</p>
+                      <p className="font-semibold">{item.customerName}</p>
                       <p className="text-xs text-muted-foreground">
-                        {formatQualityChecklistCategory(item.category)} · {item.zone || 'Genel'} · {formatDateTime(item.scheduledAt)}
+                        {item.mouldingProfile} · {item.supplierName || 'Tedarikçi belirtilmemiş'} · {formatCurrency(item.price)}
                       </p>
                     </div>
                   </div>
-                  <Badge variant="secondary">{formatQualityChecklistStatus(item.status)}</Badge>
+                  <Badge variant="secondary">{formatMouldingOrderStatus(item.status)}</Badge>
                 </CardContent>
               </Card>
             ))}
