@@ -1,4 +1,4 @@
-# StitchPulse — Mimari (ARCHITECTURE)
+# FramePulse — Mimari (ARCHITECTURE)
 
 ## Genel Bakış
 
@@ -30,11 +30,11 @@
 - `health` — GET /api/health
 - `tennis-club` — Tesis profili
 - `courts` — Kort envanteri
-- `alteration-jobs` — Ders gelir kayıtları
+- `framing-orders` — Ders gelir kayıtları
 - `equipment-maintenance` — Top makinesi bakım
 - `quality-checklists` — Kort bakım planı
-- `fabric-orders` — Kordon siparişleri
-- `service-rates` — Tarife kademeleri
+- `moulding-orders` — Kordon siparişleri
+- `pricing-tiers` — Tarife kademeleri
 - `dashboard` — İstatistikler
 
 ## Güvenlik

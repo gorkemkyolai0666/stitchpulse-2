@@ -1,4 +1,4 @@
-# StitchPulse — API (API)
+# FramePulse — API (API)
 
 Base URL: `{NEXT_PUBLIC_API_URL}` (production: Railway backend URL + `/api`)
 
@@ -36,11 +36,11 @@ Base URL: `{NEXT_PUBLIC_API_URL}` (production: Railway backend URL + `/api`)
 
 | Method | Endpoint | Auth | Status |
 |--------|----------|------|--------|
-| GET | /api/alteration-jobs | Yes | 200 |
-| GET | /api/alteration-jobs/:id | Yes | 200 |
-| POST | /api/alteration-jobs | Yes | 201 |
-| PATCH | /api/alteration-jobs/:id | Yes | 200 |
-| DELETE | /api/alteration-jobs/:id | Yes | 200 |
+| GET | /api/framing-orders | Yes | 200 |
+| GET | /api/framing-orders/:id | Yes | 200 |
+| POST | /api/framing-orders | Yes | 201 |
+| PATCH | /api/framing-orders/:id | Yes | 200 |
+| DELETE | /api/framing-orders/:id | Yes | 200 |
 
 ## Ball Machine Maintenance
 
@@ -67,22 +67,22 @@ Base URL: `{NEXT_PUBLIC_API_URL}` (production: Railway backend URL + `/api`)
 
 | Method | Endpoint | Auth | Status |
 |--------|----------|------|--------|
-| GET | /api/fabric-orders | Yes | 200 |
-| GET | /api/fabric-orders/pending | Yes | 200 |
-| GET | /api/fabric-orders/:id | Yes | 200 |
-| POST | /api/fabric-orders | Yes | 201 |
-| PATCH | /api/fabric-orders/:id | Yes | 200 |
-| DELETE | /api/fabric-orders/:id | Yes | 200 |
+| GET | /api/moulding-orders | Yes | 200 |
+| GET | /api/moulding-orders/pending | Yes | 200 |
+| GET | /api/moulding-orders/:id | Yes | 200 |
+| POST | /api/moulding-orders | Yes | 201 |
+| PATCH | /api/moulding-orders/:id | Yes | 200 |
+| DELETE | /api/moulding-orders/:id | Yes | 200 |
 
 ## Rate Tiers
 
 | Method | Endpoint | Auth | Status |
 |--------|----------|------|--------|
-| GET | /api/service-rates | Yes | 200 |
-| GET | /api/service-rates/:id | Yes | 200 |
-| POST | /api/service-rates | Yes | 201 |
-| PATCH | /api/service-rates/:id | Yes | 200 |
-| DELETE | /api/service-rates/:id | Yes | 200 |
+| GET | /api/pricing-tiers | Yes | 200 |
+| GET | /api/pricing-tiers/:id | Yes | 200 |
+| POST | /api/pricing-tiers | Yes | 201 |
+| PATCH | /api/pricing-tiers/:id | Yes | 200 |
+| DELETE | /api/pricing-tiers/:id | Yes | 200 |
 
 ## Dashboard
 

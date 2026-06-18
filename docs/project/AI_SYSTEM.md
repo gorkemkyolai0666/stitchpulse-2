@@ -1,8 +1,8 @@
-# StitchPulse — AI Sistemi (AI_SYSTEM)
+# FramePulse — AI Sistemi (AI_SYSTEM)
 
 ## Durum
 
-StitchPulse MVP'de AI özelliği bulunmamaktadır. Gelecek fazlarda değerlendirilecek özellikler:
+FramePulse MVP'de AI özelliği bulunmamaktadır. Gelecek fazlarda değerlendirilecek özellikler:
 
 - Kort kullanım tahmin modeli (yoğun saat optimizasyonu)
 - Top makinesi bakım anomali tespiti

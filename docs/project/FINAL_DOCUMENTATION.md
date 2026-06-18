@@ -1,42 +1,42 @@
-# StitchPulse — Final Documentation
+# FramePulse — Final Documentation
 
-**Proje:** StitchPulse  
-**Repo:** https://github.com/gorkemkyolai06/stitchpulse  
-**Tamamlanma:** 2026-06-17  
-**Durum:** MVP tamamlandı, deployment bekliyor
+**Proje:** FramePulse  
+**Repo:** https://github.com/gorkemkyolai0666/stitchpulse-2  
+**Tamamlanma:** 2026-06-18  
+**Durum:** MVP Tamamlandı — Deploy Bekliyor
 
-## Ürün Özeti
+## Özet
 
-Terzi ve tadilat atölyeleri için operasyon yönetim SaaS platformu. NestJS + Prisma + PostgreSQL backend, Next.js + Tailwind + shadcn/ui frontend.
+Özel çerçeve atölyeleri için operasyon yönetim SaaS platformu. NestJS + Prisma + PostgreSQL backend, Next.js + Tailwind + shadcn/ui frontend.
 
-## Modüller
+## API Modülleri
 
-| Modül | API Prefix | Açıklama |
-|-------|-----------|----------|
-| TailoringShop | /api/tailoring-shop | Atölye profili |
-| Workstations | /api/workstations | İş istasyonu envanteri |
-| AlterationJobs | /api/alteration-jobs | Tadilat işleri |
+| Modül | Endpoint | Açıklama |
+|-------|----------|----------|
+| FramingShop | /api/framing-shop | Atölye profili |
+| WorkBenches | /api/work-benches | Tezgah envanteri |
+| FramingOrders | /api/framing-orders | Çerçeveleme siparişleri |
 | EquipmentMaintenance | /api/equipment-maintenance | Ekipman bakımı |
 | QualityChecklists | /api/quality-checklists | Kalite kontrol |
-| FabricOrders | /api/fabric-orders | Kumaş siparişleri |
-| ServiceRates | /api/service-rates | Hizmet tarifeleri |
-| Dashboard | /api/dashboard/stats | Özet istatistikler |
+| MouldingOrders | /api/moulding-orders | Profil siparişleri |
+| PricingTiers | /api/pricing-tiers | Fiyatlandırma |
+| Dashboard | /api/dashboard/stats | Operasyon paneli |
+| Health | /api/health | Sağlık kontrolü |
 
 ## Demo
 
-```
-E-posta: demo@heritagetailors.com
-Şifre: demo123456
-```
+- E-posta: demo@galleryframes.com
+- Şifre: demo123456
 
-## Kararlar
+## Teknik Kararlar
 
-1. EscapePulse şablonundan domain dönüşümü (`scripts/transform-from-escapepulse.py`)
-2. Premium Editorial Fashion tasarım yönü — üst navigasyon, terracotta paleti
-3. Ayrı public GitHub reposu (fabrika deposu dışında)
-4. Deployment: Railway backend + Vercel frontend via GitHub integration
+1. StitchPulse fork + domain transform — hızlı MVP üretimi
+2. Sol kenar navigasyon — StitchPulse üst nav'dan farklılaşma
+3. Art Gallery Minimalist tasarım — indigo-bronz-krem paleti
+4. Railway backend + Vercel frontend — standart deployment mimarisi
 
-## Eksikler
+## Deployment Engelleyiciler
 
-- Production URL'ler (RAILWAY_API_TOKEN ve platform entegrasyonları eksik)
-- Factory memory'de kayıtlı
+- RAILWAY_API_TOKEN agent ortamında mevcut değil
+- Vercel/Railway GitHub native integration yapılandırılmamış
+- Repo rename API 403 — stitchpulse-2 → framepulse manuel gerekli
