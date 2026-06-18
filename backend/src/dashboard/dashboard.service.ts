@@ -5,7 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 export class DashboardService {
   constructor(private prisma: PrismaService) {}
 
-  async getStats(tailoringShopId: string) {
+  async getStats(framingShopId: string) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -16,83 +16,83 @@ export class DashboardService {
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
     const [
-      tailoringShop,
-      totalWorkstations,
-      availableWorkstations,
-      inUseWorkstations,
-      totalJobs,
+      framingShop,
+      totalWorkBenches,
+      availableWorkBenches,
+      inUseWorkBenches,
+      totalOrders,
       openEquipmentMaintenance,
       urgentEquipmentMaintenance,
       pendingQualityChecklist,
-      activeServiceRates,
-      pendingFabricOrders,
-      completedFabricOrders,
+      activePricingTiers,
+      pendingMouldingOrders,
+      completedMouldingOrders,
       revenueTotals,
-      recentJobs,
+      recentOrders,
       recentEquipmentMaintenance,
       shopZones,
     ] = await Promise.all([
-      this.prisma.tailoringShop.findUnique({ where: { id: tailoringShopId } }),
-      this.prisma.workstation.count({ where: { tailoringShopId } }),
-      this.prisma.workstation.count({ where: { tailoringShopId, status: 'available' } }),
-      this.prisma.workstation.count({ where: { tailoringShopId, status: 'in_use' } }),
-      this.prisma.alterationJob.count({ where: { tailoringShopId } }),
+      this.prisma.framingShop.findUnique({ where: { id: framingShopId } }),
+      this.prisma.workBench.count({ where: { framingShopId } }),
+      this.prisma.workBench.count({ where: { framingShopId, status: 'available' } }),
+      this.prisma.workBench.count({ where: { framingShopId, status: 'in_use' } }),
+      this.prisma.framingOrder.count({ where: { framingShopId } }),
       this.prisma.equipmentMaintenance.count({
-        where: { tailoringShopId, status: { in: ['open', 'in_progress'] } },
+        where: { framingShopId, status: { in: ['open', 'in_progress'] } },
       }),
       this.prisma.equipmentMaintenance.count({
         where: {
-          tailoringShopId,
+          framingShopId,
           status: { in: ['open', 'in_progress'] },
           priority: { in: ['high', 'urgent'] },
         },
       }),
       this.prisma.qualityChecklist.count({
         where: {
-          tailoringShopId,
+          framingShopId,
           status: { in: ['scheduled', 'overdue'] },
           scheduledAt: { lte: sevenDaysLater },
         },
       }),
-      this.prisma.serviceRate.count({
-        where: { tailoringShopId, status: 'active' },
+      this.prisma.pricingTier.count({
+        where: { framingShopId, status: 'active' },
       }),
-      this.prisma.fabricOrder.count({
-        where: { tailoringShopId, status: { in: ['pending', 'in_progress'] } },
+      this.prisma.mouldingOrder.count({
+        where: { framingShopId, status: { in: ['pending', 'in_progress'] } },
       }),
-      this.prisma.fabricOrder.count({
-        where: { tailoringShopId, status: { in: ['completed', 'delivered'] } },
+      this.prisma.mouldingOrder.count({
+        where: { framingShopId, status: { in: ['completed', 'delivered'] } },
       }),
-      this.prisma.alterationJob.aggregate({
-        where: { tailoringShopId, dueAt: { gte: today } },
+      this.prisma.framingOrder.aggregate({
+        where: { framingShopId, dueAt: { gte: today } },
         _sum: { cashAmount: true, cardAmount: true, rushFee: true },
       }),
-      this.prisma.alterationJob.findMany({
-        where: { tailoringShopId },
+      this.prisma.framingOrder.findMany({
+        where: { framingShopId },
         include: {
-          workstation: { select: { name: true, zone: true, specialty: true } },
+          workBench: { select: { name: true, zone: true, specialty: true } },
         },
         orderBy: { dueAt: 'desc' },
         take: 5,
       }),
       this.prisma.equipmentMaintenance.findMany({
-        where: { tailoringShopId, status: { in: ['open', 'in_progress'] } },
+        where: { framingShopId, status: { in: ['open', 'in_progress'] } },
         include: {
-          workstation: { select: { name: true, zone: true } },
+          workBench: { select: { name: true, zone: true } },
         },
         orderBy: { reportedAt: 'desc' },
         take: 5,
       }),
-      this.prisma.workstation.groupBy({
+      this.prisma.workBench.groupBy({
         by: ['zone'],
-        where: { tailoringShopId },
+        where: { framingShopId },
         _count: { id: true },
       }),
     ]);
 
-    const totalCapacity = tailoringShop?.totalWorkstations || totalWorkstations || 1;
-    const workstationUtilizationRate =
-      totalWorkstations > 0 ? Math.round((inUseWorkstations / totalWorkstations) * 1000) / 10 : 0;
+    const totalCapacity = framingShop?.totalWorkBenches || totalWorkBenches || 1;
+    const workBenchUtilizationRate =
+      totalWorkBenches > 0 ? Math.round((inUseWorkBenches / totalWorkBenches) * 1000) / 10 : 0;
 
     const dailyRevenue =
       (revenueTotals._sum.cashAmount || 0) +
@@ -101,36 +101,36 @@ export class DashboardService {
 
     const dailyRushFees = revenueTotals._sum.rushFee || 0;
 
-    const monthlyTrend = await this.getMonthlyTrend(tailoringShopId, sixMonthsAgo);
+    const monthlyTrend = await this.getMonthlyTrend(framingShopId, sixMonthsAgo);
 
     return {
-      totalWorkstations,
-      availableWorkstations,
-      inUseWorkstations,
+      totalWorkBenches,
+      availableWorkBenches,
+      inUseWorkBenches,
       totalCapacity,
-      workstationUtilizationRate,
-      totalJobs,
+      workBenchUtilizationRate,
+      totalOrders,
       openEquipmentMaintenance,
       urgentEquipmentMaintenance,
       pendingQualityChecklist,
-      activeServiceRates,
-      pendingFabricOrders,
-      completedFabricOrders,
+      activePricingTiers,
+      pendingMouldingOrders,
+      completedMouldingOrders,
       dailyRevenue,
       dailyRushFees,
-      recentJobs,
+      recentOrders,
       recentEquipmentMaintenance,
       shopZones: shopZones.map((w) => ({
         zone: w.zone,
-        workstationCount: w._count.id,
+        workBenchCount: w._count.id,
       })),
       monthlyTrend,
     };
   }
 
-  private async getMonthlyTrend(tailoringShopId: string, since: Date) {
-    const sessions = await this.prisma.alterationJob.findMany({
-      where: { tailoringShopId, dueAt: { gte: since } },
+  private async getMonthlyTrend(framingShopId: string, since: Date) {
+    const sessions = await this.prisma.framingOrder.findMany({
+      where: { framingShopId, dueAt: { gte: since } },
       select: {
         dueAt: true,
         cashAmount: true,

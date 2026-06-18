@@ -15,7 +15,7 @@ export class RegisterDto {
   lastName: string;
 
   @IsString()
-  tailoringShopName: string;
+  framingShopName: string;
 
   @IsOptional()
   @IsString()

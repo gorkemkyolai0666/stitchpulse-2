@@ -6,17 +6,17 @@ describe('DashboardService', () => {
   let service: DashboardService;
 
   const mockPrisma = {
-    tailoringShop: { findUnique: jest.fn() },
-    workstation: { count: jest.fn(), groupBy: jest.fn() },
-    alterationJob: {
+    framingShop: { findUnique: jest.fn() },
+    workBench: { count: jest.fn(), groupBy: jest.fn() },
+    framingOrder: {
       count: jest.fn(),
       aggregate: jest.fn(),
       findMany: jest.fn().mockResolvedValue([]),
     },
     equipmentMaintenance: { count: jest.fn(), findMany: jest.fn().mockResolvedValue([]) },
     qualityChecklist: { count: jest.fn() },
-    serviceRate: { count: jest.fn() },
-    fabricOrder: { count: jest.fn() },
+    pricingTier: { count: jest.fn() },
+    mouldingOrder: { count: jest.fn() },
   };
 
   beforeEach(async () => {
@@ -32,42 +32,42 @@ describe('DashboardService', () => {
   });
 
   it('should return tailoring shop dashboard stats', async () => {
-    mockPrisma.tailoringShop.findUnique.mockResolvedValue({ totalWorkstations: 8 });
-    mockPrisma.workstation.count
+    mockPrisma.framingShop.findUnique.mockResolvedValue({ totalWorkBenches: 8 });
+    mockPrisma.workBench.count
       .mockResolvedValueOnce(8)
       .mockResolvedValueOnce(4)
       .mockResolvedValueOnce(2);
-    mockPrisma.alterationJob.count.mockResolvedValue(42);
+    mockPrisma.framingOrder.count.mockResolvedValue(42);
     mockPrisma.equipmentMaintenance.count
       .mockResolvedValueOnce(3)
       .mockResolvedValueOnce(1);
-    mockPrisma.alterationJob.aggregate.mockResolvedValue({
+    mockPrisma.framingOrder.aggregate.mockResolvedValue({
       _sum: { cashAmount: 120, cardAmount: 280, rushFee: 95 },
     });
-    mockPrisma.alterationJob.findMany.mockResolvedValue([]);
+    mockPrisma.framingOrder.findMany.mockResolvedValue([]);
     mockPrisma.equipmentMaintenance.findMany.mockResolvedValue([]);
     mockPrisma.qualityChecklist.count.mockResolvedValue(2);
-    mockPrisma.serviceRate.count.mockResolvedValue(3);
-    mockPrisma.fabricOrder.count
+    mockPrisma.pricingTier.count.mockResolvedValue(3);
+    mockPrisma.mouldingOrder.count
       .mockResolvedValueOnce(3)
       .mockResolvedValueOnce(2);
-    mockPrisma.workstation.groupBy.mockResolvedValue([
+    mockPrisma.workBench.groupBy.mockResolvedValue([
       { zone: 'East Zone', _count: { id: 3 } },
       { zone: 'West Zone', _count: { id: 3 } },
     ]);
 
     const stats = await service.getStats('shop-1');
 
-    expect(stats).toHaveProperty('workstationUtilizationRate');
+    expect(stats).toHaveProperty('workBenchUtilizationRate');
     expect(stats).toHaveProperty('dailyRevenue', 495);
     expect(stats).toHaveProperty('dailyRushFees', 95);
     expect(stats).toHaveProperty('shopZones');
     expect(stats).toHaveProperty('urgentEquipmentMaintenance');
     expect(stats).toHaveProperty('pendingQualityChecklist');
-    expect(stats).toHaveProperty('activeServiceRates', 3);
-    expect(stats).toHaveProperty('pendingFabricOrders', 3);
-    expect(stats).toHaveProperty('completedFabricOrders', 2);
-    expect(stats).toHaveProperty('availableWorkstations', 4);
-    expect(stats).toHaveProperty('totalWorkstations', 8);
+    expect(stats).toHaveProperty('activePricingTiers', 3);
+    expect(stats).toHaveProperty('pendingMouldingOrders', 3);
+    expect(stats).toHaveProperty('completedMouldingOrders', 2);
+    expect(stats).toHaveProperty('availableWorkBenches', 4);
+    expect(stats).toHaveProperty('totalWorkBenches', 8);
   });
 });

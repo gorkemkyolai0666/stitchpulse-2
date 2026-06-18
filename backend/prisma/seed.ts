@@ -8,128 +8,128 @@ const SHOP_ID = '00000000-0000-0000-0000-000000000001';
 async function main() {
   const passwordHash = await bcrypt.hash('demo123456', 12);
 
-  await prisma.tailoringShop.upsert({
+  await prisma.framingShop.upsert({
     where: { id: SHOP_ID },
     update: {},
     create: {
       id: SHOP_ID,
-      name: 'Heritage Tailors & Alterations',
-      phone: '+13125550142',
-      address: '142 Michigan Avenue',
+      name: 'Gallery Frames & Fine Art',
+      phone: '+13125550189',
+      address: '189 W Madison Street',
       city: 'Chicago',
       state: 'IL',
-      zipCode: '60601',
-      totalWorkstations: 6,
+      zipCode: '60602',
+      totalWorkBenches: 6,
       timezone: 'America/Chicago',
       users: {
         create: {
-          email: 'demo@heritagetailors.com',
+          email: 'demo@galleryframes.com',
           passwordHash,
-          firstName: 'Elif',
-          lastName: 'Kara',
+          firstName: 'Aylin',
+          lastName: 'Demir',
           role: 'owner',
         },
       },
     },
   });
 
-  const workstationData = [
+  const workBenchData = [
     {
       id: '00000000-0000-0000-0000-000000000101',
-      name: 'Station A — Formal',
-      zone: 'Front Atelier',
-      specialty: 'formal' as const,
-      machineModel: 'Juki DDL-8700',
+      name: 'Bench A — Standard',
+      zone: 'Assembly Floor',
+      specialty: 'standard' as const,
+      machineModel: 'Fletcher 3000 Mat Cutter',
       status: 'available' as const,
     },
     {
       id: '00000000-0000-0000-0000-000000000102',
-      name: 'Station B — Bridal',
-      zone: 'Front Atelier',
-      specialty: 'bridal' as const,
-      machineModel: 'Brother PQ1500SL',
+      name: 'Bench B — Museum',
+      zone: 'Assembly Floor',
+      specialty: 'museum' as const,
+      machineModel: 'D&K Fusion 2500',
       status: 'in_use' as const,
     },
     {
       id: '00000000-0000-0000-0000-000000000103',
-      name: 'Station C — Casual',
-      zone: 'Back Workshop',
-      specialty: 'casual' as const,
-      machineModel: 'Singer 4423',
+      name: 'Bench C — Shadow Box',
+      zone: 'Specialty Room',
+      specialty: 'shadow_box' as const,
+      machineModel: 'Morsø 6800 Chopper',
       status: 'available' as const,
     },
     {
       id: '00000000-0000-0000-0000-000000000104',
-      name: 'Station D — Leather',
-      zone: 'Back Workshop',
-      specialty: 'leather' as const,
-      machineModel: 'Consew 206RB-5',
+      name: 'Bench D — Canvas',
+      zone: 'Specialty Room',
+      specialty: 'canvas' as const,
+      machineModel: 'Keencut Ultimat Futura',
       status: 'cleaning' as const,
     },
     {
       id: '00000000-0000-0000-0000-000000000105',
-      name: 'Press & Finish',
-      zone: 'Finishing Room',
+      name: 'Glass & Mount Station',
+      zone: 'Finishing Bay',
       specialty: 'specialty' as const,
-      machineModel: 'Naomoto HYS-700',
+      machineModel: 'Glass Master Ultra',
       status: 'maintenance' as const,
     },
     {
       id: '00000000-0000-0000-0000-000000000106',
-      name: 'Fitting Room Suite',
+      name: 'Pickup Counter',
       zone: 'Client Area',
-      specialty: 'formal' as const,
+      specialty: 'standard' as const,
       machineModel: null,
       status: 'closed' as const,
     },
   ];
 
-  const workstations = [];
-  for (const ws of workstationData) {
-    const created = await prisma.workstation.upsert({
-      where: { id: ws.id },
+  const workBenches = [];
+  for (const bench of workBenchData) {
+    const created = await prisma.workBench.upsert({
+      where: { id: bench.id },
       update: {},
-      create: { ...ws, tailoringShopId: SHOP_ID },
+      create: { ...bench, framingShopId: SHOP_ID },
     });
-    workstations.push(created);
+    workBenches.push(created);
   }
 
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
 
-  await prisma.alterationJob.upsert({
+  await prisma.framingOrder.upsert({
     where: { id: '00000000-0000-0000-0000-000000000201' },
     update: {},
     create: {
       id: '00000000-0000-0000-0000-000000000201',
-      tailoringShopId: SHOP_ID,
-      workstationId: workstations[2].id,
+      framingShopId: SHOP_ID,
+      workBenchId: workBenches[2].id,
       dueAt: yesterday,
-      jobType: 'suit',
+      orderType: 'museum_grade',
       cashAmount: 0,
-      cardAmount: 285.0,
-      itemCount: 2,
-      rushFee: 45.0,
+      cardAmount: 485.0,
+      itemCount: 1,
+      rushFee: 75.0,
       status: 'verified',
-      notes: 'Erkek takım elbise paça kısaltma',
+      notes: 'Müze camı ile yağlı boya tablo çerçeveleme',
     },
   });
 
-  await prisma.alterationJob.upsert({
+  await prisma.framingOrder.upsert({
     where: { id: '00000000-0000-0000-0000-000000000202' },
     update: {},
     create: {
       id: '00000000-0000-0000-0000-000000000202',
-      tailoringShopId: SHOP_ID,
-      workstationId: workstations[1].id,
+      framingShopId: SHOP_ID,
+      workBenchId: workBenches[1].id,
       dueAt: yesterday,
-      jobType: 'wedding_dress',
-      cashAmount: 120.0,
-      cardAmount: 680.0,
-      itemCount: 1,
-      rushFee: 95.0,
+      orderType: 'shadow_box',
+      cashAmount: 150.0,
+      cardAmount: 320.0,
+      itemCount: 2,
+      rushFee: 45.0,
       status: 'verified',
-      notes: 'Gelinlik bel ve kol düzeltme',
+      notes: 'Hatıra eşyası gölge kutu — Thompson ailesi',
     },
   });
 
@@ -141,10 +141,10 @@ async function main() {
     update: {},
     create: {
       id: '00000000-0000-0000-0000-000000000301',
-      tailoringShopId: SHOP_ID,
-      workstationId: workstations[4].id,
-      title: 'Buharlı pres makinesi arızası',
-      description: 'Basınç düzensiz, buhar kaçağı tespit edildi',
+      framingShopId: SHOP_ID,
+      workBenchId: workBenches[4].id,
+      title: 'Cam kesici bıçak aşınması',
+      description: 'Glass Master Ultra bıçak değişimi gerekli',
       reportedAt,
       priority: 'urgent',
       status: 'open',
@@ -157,14 +157,14 @@ async function main() {
     update: {},
     create: {
       id: '00000000-0000-0000-0000-000000000302',
-      tailoringShopId: SHOP_ID,
-      workstationId: workstations[1].id,
-      title: 'Dikiş makinesi iğne değişimi',
-      description: 'Brother PQ1500SL iğne kırılması',
+      framingShopId: SHOP_ID,
+      workBenchId: workBenches[1].id,
+      title: 'Morsø bıçak kalibrasyonu',
+      description: 'Köşe birleşimlerinde 1mm boşluk tespit edildi',
       reportedAt,
       priority: 'medium',
       status: 'in_progress',
-      cost: 35.0,
+      cost: 85.0,
     },
   });
 
@@ -176,10 +176,10 @@ async function main() {
     update: {},
     create: {
       id: '00000000-0000-0000-0000-000000000401',
-      tailoringShopId: SHOP_ID,
-      title: 'Gelinlik son kontrol — Thompson',
-      category: 'stitch_inspection',
-      zone: 'Front Atelier',
+      framingShopId: SHOP_ID,
+      title: 'Müze camı son kontrol — Thompson',
+      category: 'glass_check',
+      zone: 'Finishing Bay',
       scheduledAt,
       status: 'scheduled',
     },
@@ -190,73 +190,73 @@ async function main() {
     update: {},
     create: {
       id: '00000000-0000-0000-0000-000000000402',
-      tailoringShopId: SHOP_ID,
-      title: 'Takım elbise final pres — Martinez',
-      category: 'final_press',
-      zone: 'Finishing Room',
+      framingShopId: SHOP_ID,
+      title: 'Köşe birleşim kontrolü — Martinez',
+      category: 'corner_joint',
+      zone: 'Assembly Floor',
       scheduledAt,
       status: 'scheduled',
     },
   });
 
-  await prisma.serviceRate.upsert({
+  await prisma.pricingTier.upsert({
     where: { id: '00000000-0000-0000-0000-000000000501' },
     update: {},
     create: {
       id: '00000000-0000-0000-0000-000000000501',
-      tailoringShopId: SHOP_ID,
-      title: 'Paça Kısaltma',
-      rateCategory: 'basic_alteration',
-      basePrice: 18.0,
+      framingShopId: SHOP_ID,
+      title: 'Standart Çerçeve (16x20)',
+      pricingCategory: 'standard_frame',
+      basePrice: 89.0,
       priceMultiplier: 1.0,
       status: 'active',
     },
   });
 
-  await prisma.serviceRate.upsert({
+  await prisma.pricingTier.upsert({
     where: { id: '00000000-0000-0000-0000-000000000502' },
     update: {},
     create: {
       id: '00000000-0000-0000-0000-000000000502',
-      tailoringShopId: SHOP_ID,
-      title: 'Gelinlik Paketi',
-      rateCategory: 'bridal_package',
-      basePrice: 450.0,
-      priceMultiplier: 1.25,
+      framingShopId: SHOP_ID,
+      title: 'Müze Paketi (UV Cam)',
+      pricingCategory: 'museum_package',
+      basePrice: 275.0,
+      priceMultiplier: 1.35,
       status: 'active',
     },
   });
 
-  await prisma.fabricOrder.upsert({
+  await prisma.mouldingOrder.upsert({
     where: { id: '00000000-0000-0000-0000-000000000601' },
     update: {},
     create: {
       id: '00000000-0000-0000-0000-000000000601',
-      tailoringShopId: SHOP_ID,
-      customerName: 'Thompson Wedding',
-      fabricType: 'İpek Saten',
-      supplierName: 'Fabricut Chicago',
-      price: 320.0,
+      framingShopId: SHOP_ID,
+      customerName: 'Thompson Collection',
+      mouldingProfile: 'Gold Leaf Baroque 3"',
+      supplierName: 'Larson-Juhl Chicago',
+      price: 420.0,
       status: 'pending',
     },
   });
 
-  await prisma.fabricOrder.upsert({
+  await prisma.mouldingOrder.upsert({
     where: { id: '00000000-0000-0000-0000-000000000602' },
     update: {},
     create: {
       id: '00000000-0000-0000-0000-000000000602',
-      tailoringShopId: SHOP_ID,
-      customerName: 'Martinez Corporate',
-      fabricType: 'Yün Gabardin',
-      supplierName: 'Holly Hunt Textiles',
-      price: 185.0,
+      framingShopId: SHOP_ID,
+      customerName: 'Martinez Gallery',
+      mouldingProfile: 'Walnut Classic 2.5"',
+      supplierName: 'Roma Moulding',
+      price: 265.0,
       status: 'in_progress',
     },
   });
 
-  console.log('Seed completed: Heritage Tailors & Alterations');
-  console.log('Demo: demo@heritagetailors.com / demo123456');
+  console.log('Seed completed: Gallery Frames & Fine Art');
+  console.log('Demo: demo@galleryframes.com / demo123456');
 }
 
 main()

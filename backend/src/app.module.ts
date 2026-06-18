@@ -2,13 +2,13 @@ import { Module } from '@nestjs/common';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { HealthModule } from './health/health.module';
-import { TailoringShopModule } from './tailoring-shop/tailoring-shop.module';
-import { WorkstationsModule } from './workstations/workstations.module';
-import { AlterationJobsModule } from './alteration-jobs/alteration-jobs.module';
+import { FramingShopModule } from './framing-shop/framing-shop.module';
+import { WorkBenchesModule } from './work-benches/work-benches.module';
+import { FramingOrdersModule } from './framing-orders/framing-orders.module';
 import { EquipmentMaintenanceModule } from './equipment-maintenance/equipment-maintenance.module';
 import { QualityChecklistModule } from './quality-checklists/quality-checklists.module';
-import { ServiceRatesModule } from './service-rates/service-rates.module';
-import { FabricOrdersModule } from './fabric-orders/fabric-orders.module';
+import { PricingTiersModule } from './pricing-tiers/pricing-tiers.module';
+import { MouldingOrdersModule } from './moulding-orders/moulding-orders.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
@@ -16,13 +16,13 @@ import { DashboardModule } from './dashboard/dashboard.module';
     PrismaModule,
     HealthModule,
     AuthModule,
-    TailoringShopModule,
-    WorkstationsModule,
-    AlterationJobsModule,
+    FramingShopModule,
+    WorkBenchesModule,
+    FramingOrdersModule,
     EquipmentMaintenanceModule,
     QualityChecklistModule,
-    ServiceRatesModule,
-    FabricOrdersModule,
+    PricingTiersModule,
+    MouldingOrdersModule,
     DashboardModule,
   ],
 })

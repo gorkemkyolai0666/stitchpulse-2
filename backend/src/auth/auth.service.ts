@@ -21,9 +21,9 @@ export class AuthService {
 
     const passwordHash = await bcrypt.hash(dto.password, 12);
 
-    const tailoringShop = await this.prisma.tailoringShop.create({
+    const framingShop = await this.prisma.framingShop.create({
       data: {
-        name: dto.tailoringShopName,
+        name: dto.framingShopName,
         phone: dto.phone,
         city: dto.city,
         state: dto.state,
@@ -40,8 +40,8 @@ export class AuthService {
       include: { users: true },
     });
 
-    const user = tailoringShop.users[0];
-    const token = this.generateToken(user.id, user.email, tailoringShop.id);
+    const user = framingShop.users[0];
+    const token = this.generateToken(user.id, user.email, framingShop.id);
 
     return {
       accessToken: token,
@@ -52,9 +52,9 @@ export class AuthService {
         lastName: user.lastName,
         role: user.role,
       },
-      tailoringShop: {
-        id: tailoringShop.id,
-        name: tailoringShop.name,
+      framingShop: {
+        id: framingShop.id,
+        name: framingShop.name,
       },
     };
   }
@@ -62,7 +62,7 @@ export class AuthService {
   async login(dto: LoginDto) {
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
-      include: { tailoringShop: true },
+      include: { framingShop: true },
     });
 
     if (!user) {
@@ -74,7 +74,7 @@ export class AuthService {
       throw new UnauthorizedException('Geçersiz giriş bilgileri');
     }
 
-    const token = this.generateToken(user.id, user.email, user.tailoringShopId);
+    const token = this.generateToken(user.id, user.email, user.framingShopId);
 
     return {
       accessToken: token,
@@ -85,9 +85,9 @@ export class AuthService {
         lastName: user.lastName,
         role: user.role,
       },
-      tailoringShop: {
-        id: user.tailoringShop.id,
-        name: user.tailoringShop.name,
+      framingShop: {
+        id: user.framingShop.id,
+        name: user.framingShop.name,
       },
     };
   }
@@ -95,7 +95,7 @@ export class AuthService {
   async getMe(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      include: { tailoringShop: true },
+      include: { framingShop: true },
     });
 
     if (!user) {
@@ -110,18 +110,18 @@ export class AuthService {
         lastName: user.lastName,
         role: user.role,
       },
-      tailoringShop: {
-        id: user.tailoringShop.id,
-        name: user.tailoringShop.name,
-        phone: user.tailoringShop.phone,
-        city: user.tailoringShop.city,
-        state: user.tailoringShop.state,
-        totalWorkstations: user.tailoringShop.totalWorkstations,
+      framingShop: {
+        id: user.framingShop.id,
+        name: user.framingShop.name,
+        phone: user.framingShop.phone,
+        city: user.framingShop.city,
+        state: user.framingShop.state,
+        totalWorkBenches: user.framingShop.totalWorkBenches,
       },
     };
   }
 
-  private generateToken(userId: string, email: string, tailoringShopId: string): string {
-    return this.jwtService.sign({ sub: userId, email, tailoringShopId });
+  private generateToken(userId: string, email: string, framingShopId: string): string {
+    return this.jwtService.sign({ sub: userId, email, framingShopId });
   }
 }

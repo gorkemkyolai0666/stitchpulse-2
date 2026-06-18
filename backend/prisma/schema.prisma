@@ -10,19 +10,18 @@ datasource db {
 enum UserRole {
   owner
   manager
-  tailor
+  framer
 }
 
-enum WorkstationSpecialty {
-  formal
-  bridal
-  casual
-  leather
-  denim
+enum WorkBenchSpecialty {
+  standard
+  museum
+  shadow_box
+  canvas
   specialty
 }
 
-enum WorkstationStatus {
+enum WorkBenchStatus {
   available
   in_use
   cleaning
@@ -30,18 +29,17 @@ enum WorkstationStatus {
   closed
 }
 
-enum JobStatus {
+enum OrderStatus {
   recorded
   verified
   disputed
 }
 
-enum JobType {
-  hem
-  suit
-  wedding_dress
-  leather
-  denim
+enum OrderType {
+  standard_frame
+  museum_grade
+  shadow_box
+  canvas_stretch
   rush
 }
 
@@ -60,11 +58,11 @@ enum EquipmentStatus {
 }
 
 enum ChecklistCategory {
-  final_press
-  stitch_inspection
-  fitting_prep
-  button_check
-  lining_review
+  glass_check
+  corner_joint
+  mat_alignment
+  dust_cover
+  wire_hanger
   other
 }
 
@@ -75,185 +73,185 @@ enum ChecklistStatus {
   overdue
 }
 
-enum ServiceCategory {
-  basic_alteration
-  bridal_package
+enum PricingCategory {
+  standard_frame
+  museum_package
   rush_service
-  leather_work
-  custom_fitting
+  custom_mat
+  bulk_order
   other
 }
 
-enum ServiceRateStatus {
+enum PricingTierStatus {
   active
   upcoming
   archived
 }
 
-enum FabricOrderStatus {
+enum MouldingOrderStatus {
   pending
   in_progress
   completed
   delivered
 }
 
-model TailoringShop {
-  id                String   @id @default(uuid())
-  name              String
-  phone             String?
-  address           String?
-  city              String?
-  state             String?
-  zipCode           String?  @map("zip_code")
-  totalWorkstations Int      @default(6) @map("total_workstations")
-  timezone          String   @default("America/Chicago")
-  createdAt         DateTime @default(now()) @map("created_at")
-  updatedAt         DateTime @updatedAt @map("updated_at")
+model FramingShop {
+  id               String   @id @default(uuid())
+  name             String
+  phone            String?
+  address          String?
+  city             String?
+  state            String?
+  zipCode          String?  @map("zip_code")
+  totalWorkBenches Int      @default(6) @map("total_work_benches")
+  timezone         String   @default("America/Chicago")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
 
   users                User[]
-  workstations         Workstation[]
-  alterationJobs       AlterationJob[]
+  workBenches          WorkBench[]
+  framingOrders        FramingOrder[]
   equipmentMaintenance EquipmentMaintenance[]
   qualityChecklists    QualityChecklist[]
-  serviceRates         ServiceRate[]
-  fabricOrders         FabricOrder[]
+  pricingTiers         PricingTier[]
+  mouldingOrders       MouldingOrder[]
 
-  @@map("tailoring_shops")
+  @@map("framing_shops")
 }
 
 model User {
-  id              String   @id @default(uuid())
-  email           String   @unique
-  passwordHash    String   @map("password_hash")
-  firstName       String   @map("first_name")
-  lastName        String   @map("last_name")
-  role            UserRole @default(owner)
-  tailoringShopId String   @map("tailoring_shop_id")
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
+  id            String   @id @default(uuid())
+  email         String   @unique
+  passwordHash  String   @map("password_hash")
+  firstName     String   @map("first_name")
+  lastName      String   @map("last_name")
+  role          UserRole @default(owner)
+  framingShopId String   @map("framing_shop_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
-  tailoringShop TailoringShop @relation(fields: [tailoringShopId], references: [id], onDelete: Cascade)
+  framingShop FramingShop @relation(fields: [framingShopId], references: [id], onDelete: Cascade)
 
   @@map("users")
 }
 
-model Workstation {
-  id              String               @id @default(uuid())
-  tailoringShopId String               @map("tailoring_shop_id")
-  name            String
-  zone            String
-  specialty       WorkstationSpecialty @default(formal)
-  machineModel    String?              @map("machine_model")
-  status          WorkstationStatus    @default(available)
-  notes           String?
-  createdAt       DateTime             @default(now()) @map("created_at")
-  updatedAt       DateTime             @updatedAt @map("updated_at")
+model WorkBench {
+  id            String             @id @default(uuid())
+  framingShopId String             @map("framing_shop_id")
+  name          String
+  zone          String
+  specialty     WorkBenchSpecialty @default(standard)
+  machineModel  String?            @map("machine_model")
+  status        WorkBenchStatus    @default(available)
+  notes         String?
+  createdAt     DateTime           @default(now()) @map("created_at")
+  updatedAt     DateTime           @updatedAt @map("updated_at")
 
-  tailoringShop        TailoringShop          @relation(fields: [tailoringShopId], references: [id], onDelete: Cascade)
-  alterationJobs       AlterationJob[]
+  framingShop          FramingShop            @relation(fields: [framingShopId], references: [id], onDelete: Cascade)
+  framingOrders        FramingOrder[]
   equipmentMaintenance EquipmentMaintenance[]
 
-  @@unique([tailoringShopId, name])
-  @@index([tailoringShopId, status])
-  @@map("workstations")
+  @@unique([framingShopId, name])
+  @@index([framingShopId, status])
+  @@map("work_benches")
 }
 
-model AlterationJob {
-  id              String    @id @default(uuid())
-  tailoringShopId String    @map("tailoring_shop_id")
-  workstationId   String    @map("workstation_id")
-  dueAt           DateTime  @map("due_at")
-  jobType         JobType   @default(hem) @map("job_type")
-  cashAmount      Float     @default(0) @map("cash_amount")
-  cardAmount      Float     @default(0) @map("card_amount")
-  itemCount       Int       @default(1) @map("item_count")
-  rushFee         Float     @default(0) @map("rush_fee")
-  status          JobStatus @default(recorded)
-  notes           String?
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
+model FramingOrder {
+  id            String      @id @default(uuid())
+  framingShopId String      @map("framing_shop_id")
+  workBenchId   String      @map("work_bench_id")
+  dueAt         DateTime    @map("due_at")
+  orderType     OrderType   @default(standard_frame) @map("order_type")
+  cashAmount    Float       @default(0) @map("cash_amount")
+  cardAmount    Float       @default(0) @map("card_amount")
+  itemCount     Int         @default(1) @map("item_count")
+  rushFee       Float       @default(0) @map("rush_fee")
+  status        OrderStatus @default(recorded)
+  notes         String?
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
 
-  tailoringShop TailoringShop @relation(fields: [tailoringShopId], references: [id], onDelete: Cascade)
-  workstation   Workstation   @relation(fields: [workstationId], references: [id], onDelete: Cascade)
+  framingShop FramingShop @relation(fields: [framingShopId], references: [id], onDelete: Cascade)
+  workBench   WorkBench   @relation(fields: [workBenchId], references: [id], onDelete: Cascade)
 
-  @@index([tailoringShopId, dueAt])
-  @@index([tailoringShopId, status])
-  @@map("alteration_jobs")
+  @@index([framingShopId, dueAt])
+  @@index([framingShopId, status])
+  @@map("framing_orders")
 }
 
 model EquipmentMaintenance {
-  id              String            @id @default(uuid())
-  tailoringShopId String            @map("tailoring_shop_id")
-  workstationId   String            @map("workstation_id")
-  title           String
-  description     String?
-  reportedAt      DateTime          @map("reported_at")
-  completedAt     DateTime?         @map("completed_at")
-  priority        EquipmentPriority @default(medium)
-  status          EquipmentStatus   @default(open)
-  cost            Float?
-  notes           String?
-  createdAt       DateTime          @default(now()) @map("created_at")
-  updatedAt       DateTime          @updatedAt @map("updated_at")
+  id            String            @id @default(uuid())
+  framingShopId String            @map("framing_shop_id")
+  workBenchId   String            @map("work_bench_id")
+  title         String
+  description   String?
+  reportedAt    DateTime          @map("reported_at")
+  completedAt   DateTime?         @map("completed_at")
+  priority      EquipmentPriority @default(medium)
+  status        EquipmentStatus   @default(open)
+  cost          Float?
+  notes         String?
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
 
-  tailoringShop TailoringShop @relation(fields: [tailoringShopId], references: [id], onDelete: Cascade)
-  workstation   Workstation   @relation(fields: [workstationId], references: [id], onDelete: Cascade)
+  framingShop FramingShop @relation(fields: [framingShopId], references: [id], onDelete: Cascade)
+  workBench   WorkBench   @relation(fields: [workBenchId], references: [id], onDelete: Cascade)
 
-  @@index([tailoringShopId, status])
-  @@index([tailoringShopId, priority])
+  @@index([framingShopId, status])
+  @@index([framingShopId, priority])
   @@map("equipment_maintenance")
 }
 
 model QualityChecklist {
-  id              String            @id @default(uuid())
-  tailoringShopId String            @map("tailoring_shop_id")
-  title           String
-  description     String?
-  category        ChecklistCategory @default(other)
-  zone            String?
-  scheduledAt     DateTime          @map("scheduled_at")
-  status          ChecklistStatus   @default(scheduled)
-  createdAt       DateTime          @default(now()) @map("created_at")
-  updatedAt       DateTime          @updatedAt @map("updated_at")
+  id            String            @id @default(uuid())
+  framingShopId String            @map("framing_shop_id")
+  title         String
+  description   String?
+  category      ChecklistCategory @default(other)
+  zone          String?
+  scheduledAt   DateTime          @map("scheduled_at")
+  status        ChecklistStatus   @default(scheduled)
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
 
-  tailoringShop TailoringShop @relation(fields: [tailoringShopId], references: [id], onDelete: Cascade)
+  framingShop FramingShop @relation(fields: [framingShopId], references: [id], onDelete: Cascade)
 
-  @@index([tailoringShopId, scheduledAt])
+  @@index([framingShopId, scheduledAt])
   @@map("quality_checklists")
 }
 
-model ServiceRate {
+model PricingTier {
   id              String            @id @default(uuid())
-  tailoringShopId String            @map("tailoring_shop_id")
+  framingShopId   String            @map("framing_shop_id")
   title           String
-  rateCategory    ServiceCategory   @default(basic_alteration) @map("rate_category")
-  status          ServiceRateStatus @default(active)
+  pricingCategory PricingCategory   @default(standard_frame) @map("pricing_category")
+  status          PricingTierStatus @default(active)
   basePrice       Float             @map("base_price")
   priceMultiplier Float             @default(1.0) @map("price_multiplier")
   notes           String?
   createdAt       DateTime          @default(now()) @map("created_at")
   updatedAt       DateTime          @updatedAt @map("updated_at")
 
-  tailoringShop TailoringShop @relation(fields: [tailoringShopId], references: [id], onDelete: Cascade)
+  framingShop FramingShop @relation(fields: [framingShopId], references: [id], onDelete: Cascade)
 
-  @@index([tailoringShopId, rateCategory])
-  @@map("service_rates")
+  @@index([framingShopId, pricingCategory])
+  @@map("pricing_tiers")
 }
 
-model FabricOrder {
-  id              String            @id @default(uuid())
-  tailoringShopId String            @map("tailoring_shop_id")
-  customerName    String            @map("customer_name")
-  fabricType      String            @map("fabric_type")
-  supplierName    String?           @map("supplier_name")
-  status          FabricOrderStatus @default(pending)
-  price           Float             @default(0)
+model MouldingOrder {
+  id              String              @id @default(uuid())
+  framingShopId   String              @map("framing_shop_id")
+  customerName    String              @map("customer_name")
+  mouldingProfile String              @map("moulding_profile")
+  supplierName    String?             @map("supplier_name")
+  status          MouldingOrderStatus @default(pending)
+  price           Float               @default(0)
   notes           String?
-  createdAt       DateTime          @default(now()) @map("created_at")
-  updatedAt       DateTime          @updatedAt @map("updated_at")
+  createdAt       DateTime            @default(now()) @map("created_at")
+  updatedAt       DateTime            @updatedAt @map("updated_at")
 
-  tailoringShop TailoringShop @relation(fields: [tailoringShopId], references: [id], onDelete: Cascade)
+  framingShop FramingShop @relation(fields: [framingShopId], references: [id], onDelete: Cascade)
 
-  @@index([tailoringShopId, status])
-  @@map("fabric_orders")
+  @@index([framingShopId, status])
+  @@map("moulding_orders")
 }
