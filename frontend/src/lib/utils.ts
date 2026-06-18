@@ -43,44 +43,42 @@ const WORKSTATION_STATUS: Record<string, string> = {
   closed: 'Kapalı',
 };
 
-export function formatWorkstationStatus(status: string): string {
+export function formatWorkBenchStatus(status: string): string {
   return WORKSTATION_STATUS[status] || status;
 }
 
-const WORKSTATION_SPECIALTY: Record<string, string> = {
-  formal: 'Resmi Giyim',
-  bridal: 'Gelinlik',
-  casual: 'Gündelik',
-  leather: 'Deri',
-  denim: 'Denim',
+const WORKBENCH_SPECIALTY: Record<string, string> = {
+  standard: 'Standart',
+  museum: 'Müze Kalitesi',
+  shadow_box: 'Gölge Kutu',
+  canvas: 'Tuval Germe',
   specialty: 'Özel İş',
 };
 
-export function formatWorkstationSpecialty(specialty: string): string {
-  return WORKSTATION_SPECIALTY[specialty] || specialty;
+export function formatWorkBenchSpecialty(specialty: string): string {
+  return WORKBENCH_SPECIALTY[specialty] || specialty;
 }
 
-const JOB_STATUS: Record<string, string> = {
+const ORDER_STATUS: Record<string, string> = {
   recorded: 'Kayıtlı',
   verified: 'Doğrulandı',
   disputed: 'İtirazlı',
 };
 
-export function formatJobStatus(status: string): string {
-  return JOB_STATUS[status] || status;
+export function formatOrderStatus(status: string): string {
+  return ORDER_STATUS[status] || status;
 }
 
-const JOB_TYPE: Record<string, string> = {
-  hem: 'Paça / Kenar',
-  suit: 'Takım Elbise',
-  wedding_dress: 'Gelinlik',
-  leather: 'Deri İşi',
-  denim: 'Denim',
-  rush: 'Acil İş',
+const ORDER_TYPE: Record<string, string> = {
+  standard_frame: 'Standart Çerçeve',
+  museum_grade: 'Müze Kalitesi',
+  shadow_box: 'Gölge Kutu',
+  canvas_stretch: 'Tuval Germe',
+  rush: 'Acil Sipariş',
 };
 
-export function formatJobType(type: string): string {
-  return JOB_TYPE[type] || type;
+export function formatOrderType(type: string): string {
+  return ORDER_TYPE[type] || type;
 }
 
 const EQUIPMENT_STATUS: Record<string, string> = {
@@ -117,11 +115,11 @@ export function formatQualityChecklistStatus(status: string): string {
 }
 
 const CHECKLIST_CATEGORY: Record<string, string> = {
-  final_press: 'Son Pres',
-  stitch_inspection: 'Dikiş Kontrolü',
-  fitting_prep: 'Prova Hazırlığı',
-  button_check: 'Düğme Kontrolü',
-  lining_review: 'Astar İncelemesi',
+  glass_check: 'Cam Kontrolü',
+  corner_joint: 'Köşe Birleşimi',
+  mat_alignment: 'Paspartu Hizası',
+  dust_cover: 'Toz Kapağı',
+  wire_hanger: 'Askı Teli',
   other: 'Diğer',
 };
 
@@ -136,7 +134,7 @@ const FABRIC_ORDER_STATUS: Record<string, string> = {
   delivered: 'Teslim Edildi',
 };
 
-export function formatFabricOrderStatus(status: string): string {
+export function formatMouldingOrderStatus(status: string): string {
   return FABRIC_ORDER_STATUS[status] || status;
 }
 
@@ -146,21 +144,21 @@ const SERVICE_RATE_STATUS: Record<string, string> = {
   archived: 'Arşiv',
 };
 
-export function formatServiceRateStatus(status: string): string {
+export function formatPricingTierStatus(status: string): string {
   return SERVICE_RATE_STATUS[status] || status;
 }
 
-const SERVICE_CATEGORY: Record<string, string> = {
-  basic_alteration: 'Temel Tadilat',
-  bridal_package: 'Gelinlik Paketi',
+const PRICING_CATEGORY: Record<string, string> = {
+  standard_frame: 'Standart Çerçeve',
+  museum_package: 'Müze Paketi',
   rush_service: 'Acil Hizmet',
-  leather_work: 'Deri İşi',
-  custom_fitting: 'Özel Prova',
+  custom_mat: 'Özel Paspartu',
+  bulk_order: 'Toplu Sipariş',
   other: 'Diğer',
 };
 
-export function formatServiceCategory(category: string): string {
-  return SERVICE_CATEGORY[category] || category;
+export function formatPricingCategory(category: string): string {
+  return PRICING_CATEGORY[category] || category;
 }
 
 const MONTH_NAMES: Record<number, string> = {

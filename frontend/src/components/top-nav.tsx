@@ -22,30 +22,30 @@ import { Button } from '@/components/ui/button';
 
 const navItems = [
   { href: '/dashboard', label: 'Panel', icon: LayoutDashboard },
-  { href: '/workstations', label: 'İstasyonlar', icon: Scissors },
-  { href: '/alteration-jobs', label: 'Tadilatlar', icon: ClipboardList },
+  { href: '/workBenchs', label: 'İstasyonlar', icon: Scissors },
+  { href: '/framing-orders', label: 'Tadilatlar', icon: ClipboardList },
   { href: '/equipment-maintenance', label: 'Ekipman', icon: Wrench },
   { href: '/quality-checklists', label: 'Kalite', icon: CheckSquare },
-  { href: '/fabric-orders', label: 'Kumaş', icon: Package },
-  { href: '/service-rates', label: 'Tarifeler', icon: Tags },
+  { href: '/moulding-orders', label: 'Kumaş', icon: Package },
+  { href: '/pricing-tiers', label: 'Tarifeler', icon: Tags },
   { href: '/settings', label: 'Ayarlar', icon: Settings },
 ];
 
 export function TopNav() {
   const pathname = usePathname();
-  const { tailoringShop, user, logout } = useAuth();
+  const { framingShop, user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/80 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 lg:px-8">
-        <Link href="/dashboard" className="flex shrink-0 items-center gap-2" aria-label="StitchPulse ana sayfa">
+        <Link href="/dashboard" className="flex shrink-0 items-center gap-2" aria-label="FramePulse ana sayfa">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-accent text-accent-foreground">
             <Scissors className="h-4 w-4" strokeWidth={2} />
           </div>
           <div className="hidden sm:block">
-            <p className="font-display text-lg leading-none text-primary">StitchPulse</p>
-            <p className="truncate text-[11px] text-muted-foreground">{tailoringShop?.name || 'Atölye'}</p>
+            <p className="font-display text-lg leading-none text-primary">FramePulse</p>
+            <p className="truncate text-[11px] text-muted-foreground">{framingShop?.name || 'Atölye'}</p>
           </div>
         </Link>
 
