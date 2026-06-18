@@ -25,12 +25,12 @@ export class EquipmentMaintenanceController {
 
   @Get()
   list(
-    @Request() req: { user: { tailoringShopId: string } },
+    @Request() req: { user: { framingShopId: string } },
     @Query('page') page?: string,
     @Query('status') status?: string,
     @Query('priority') priority?: string,
   ) {
-    return this.equipmentMaintenanceService.list(req.user.tailoringShopId, {
+    return this.equipmentMaintenanceService.list(req.user.framingShopId, {
       page: page ? parseInt(page, 10) : undefined,
       status,
       priority,
@@ -38,35 +38,35 @@ export class EquipmentMaintenanceController {
   }
 
   @Get('urgent')
-  urgent(@Request() req: { user: { tailoringShopId: string } }) {
-    return this.equipmentMaintenanceService.urgent(req.user.tailoringShopId);
+  urgent(@Request() req: { user: { framingShopId: string } }) {
+    return this.equipmentMaintenanceService.urgent(req.user.framingShopId);
   }
 
   @Get(':id')
-  get(@Request() req: { user: { tailoringShopId: string } }, @Param('id') id: string) {
-    return this.equipmentMaintenanceService.get(req.user.tailoringShopId, id);
+  get(@Request() req: { user: { framingShopId: string } }, @Param('id') id: string) {
+    return this.equipmentMaintenanceService.get(req.user.framingShopId, id);
   }
 
   @Post()
   @HttpCode(201)
   create(
-    @Request() req: { user: { tailoringShopId: string } },
+    @Request() req: { user: { framingShopId: string } },
     @Body() dto: CreateEquipmentMaintenanceDto,
   ) {
-    return this.equipmentMaintenanceService.create(req.user.tailoringShopId, dto);
+    return this.equipmentMaintenanceService.create(req.user.framingShopId, dto);
   }
 
   @Patch(':id')
   update(
-    @Request() req: { user: { tailoringShopId: string } },
+    @Request() req: { user: { framingShopId: string } },
     @Param('id') id: string,
     @Body() dto: UpdateEquipmentMaintenanceDto,
   ) {
-    return this.equipmentMaintenanceService.update(req.user.tailoringShopId, id, dto);
+    return this.equipmentMaintenanceService.update(req.user.framingShopId, id, dto);
   }
 
   @Delete(':id')
-  remove(@Request() req: { user: { tailoringShopId: string } }, @Param('id') id: string) {
-    return this.equipmentMaintenanceService.remove(req.user.tailoringShopId, id);
+  remove(@Request() req: { user: { framingShopId: string } }, @Param('id') id: string) {
+    return this.equipmentMaintenanceService.remove(req.user.framingShopId, id);
   }
 }

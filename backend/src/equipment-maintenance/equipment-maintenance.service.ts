@@ -10,12 +10,12 @@ export class EquipmentMaintenanceService {
   constructor(private prisma: PrismaService) {}
 
   async list(
-    tailoringShopId: string,
+    framingShopId: string,
     params: { page?: number; status?: string; priority?: string },
   ) {
     const page = params.page || 1;
     const limit = 20;
-    const where: Record<string, unknown> = { tailoringShopId };
+    const where: Record<string, unknown> = { framingShopId };
     if (params.status) where.status = params.status;
     if (params.priority) where.priority = params.priority;
 
@@ -26,7 +26,7 @@ export class EquipmentMaintenanceService {
         skip: (page - 1) * limit,
         take: limit,
         include: {
-          workstation: { select: { id: true, name: true, zone: true } },
+          workBench: { select: { id: true, name: true, zone: true } },
         },
       }),
       this.prisma.equipmentMaintenance.count({ where }),
@@ -35,41 +35,41 @@ export class EquipmentMaintenanceService {
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  async urgent(tailoringShopId: string) {
+  async urgent(framingShopId: string) {
     return this.prisma.equipmentMaintenance.findMany({
       where: {
-        tailoringShopId,
+        framingShopId,
         status: { in: ['open', 'in_progress'] },
         priority: { in: ['high', 'urgent'] },
       },
-      include: { workstation: { select: { name: true, zone: true } } },
+      include: { workBench: { select: { name: true, zone: true } } },
       orderBy: { reportedAt: 'desc' },
       take: 10,
     });
   }
 
-  async get(tailoringShopId: string, id: string) {
+  async get(framingShopId: string, id: string) {
     const maintenance = await this.prisma.equipmentMaintenance.findFirst({
-      where: { id, tailoringShopId },
-      include: { workstation: true },
+      where: { id, framingShopId },
+      include: { workBench: true },
     });
     if (!maintenance) throw new NotFoundException('Top makinesi bakım kaydı bulunamadı');
     return maintenance;
   }
 
-  async create(tailoringShopId: string, dto: CreateEquipmentMaintenanceDto) {
+  async create(framingShopId: string, dto: CreateEquipmentMaintenanceDto) {
     return this.prisma.equipmentMaintenance.create({
       data: {
         ...dto,
-        tailoringShopId,
+        framingShopId,
         reportedAt: dto.reportedAt ? new Date(dto.reportedAt) : new Date(),
       },
-      include: { workstation: true },
+      include: { workBench: true },
     });
   }
 
-  async update(tailoringShopId: string, id: string, dto: UpdateEquipmentMaintenanceDto) {
-    await this.get(tailoringShopId, id);
+  async update(framingShopId: string, id: string, dto: UpdateEquipmentMaintenanceDto) {
+    await this.get(framingShopId, id);
     const data = { ...dto };
     if (dto.reportedAt) {
       (data as { reportedAt?: Date }).reportedAt = new Date(dto.reportedAt);
@@ -80,12 +80,12 @@ export class EquipmentMaintenanceService {
     return this.prisma.equipmentMaintenance.update({
       where: { id },
       data,
-      include: { workstation: true },
+      include: { workBench: true },
     });
   }
 
-  async remove(tailoringShopId: string, id: string) {
-    await this.get(tailoringShopId, id);
+  async remove(framingShopId: string, id: string) {
+    await this.get(framingShopId, id);
     return this.prisma.equipmentMaintenance.delete({ where: { id } });
   }
 }

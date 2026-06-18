@@ -10,7 +10,7 @@ import { EquipmentPriority, EquipmentStatus } from '@prisma/client';
 
 export class CreateEquipmentMaintenanceDto {
   @IsUUID()
-  workstationId: string;
+  workBenchId: string;
 
   @IsString()
   title: string;
@@ -43,7 +43,7 @@ export class CreateEquipmentMaintenanceDto {
 export class UpdateEquipmentMaintenanceDto {
   @IsOptional()
   @IsUUID()
-  workstationId?: string;
+  workBenchId?: string;
 
   @IsOptional()
   @IsString()
