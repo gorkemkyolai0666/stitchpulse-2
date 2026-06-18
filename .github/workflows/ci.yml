@@ -17,9 +17,9 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_USER: stitchpulse
-          POSTGRES_PASSWORD: stitchpulse123
-          POSTGRES_DB: stitchpulse
+          POSTGRES_USER: framepulse
+          POSTGRES_PASSWORD: framepulse123
+          POSTGRES_DB: framepulse
         ports:
           - 5457:5432
         options: >-
@@ -48,7 +48,7 @@ jobs:
           npm run db:migrate
           npm run db:seed
         env:
-          DATABASE_URL: postgresql://stitchpulse:stitchpulse123@localhost:5457/stitchpulse?schema=public
+          DATABASE_URL: postgresql://framepulse:framepulse123@localhost:5457/framepulse?schema=public
 
       - name: Run unit tests
         run: npm test
@@ -58,8 +58,8 @@ jobs:
 
       - name: Start API and run integration tests
         env:
-          DATABASE_URL: postgresql://stitchpulse:stitchpulse123@localhost:5457/stitchpulse?schema=public
-          JWT_SECRET: stitchpulse-ci-secret
+          DATABASE_URL: postgresql://framepulse:framepulse123@localhost:5457/framepulse?schema=public
+          JWT_SECRET: framepulse-ci-secret
           PORT: 4017
         run: |
           npm run start:prod &

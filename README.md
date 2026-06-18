@@ -1,27 +1,26 @@
-# StitchPulse
+# FramePulse
 
-Terzi ve tadilat atölyesi operasyon yönetimi B2B SaaS platformu.
+Özel çerçeve atölyesi operasyon yönetimi B2B SaaS platformu.
 
 ## Stack
 
 - **Backend:** NestJS, Prisma, PostgreSQL
 - **Frontend:** Next.js 14, TypeScript, Tailwind CSS, shadcn/ui
+- **Deployment:** Railway (backend) + Vercel (frontend)
+
+## Demo
+
+- E-posta: demo@galleryframes.com
+- Şifre: demo123456
 
 ## Geliştirme
 
 ```bash
-# Backend (port 4017)
-cd backend && npm install && npm run start:dev
+# Backend
+cd backend && npm ci && npm run db:migrate && npm run db:seed && npm run start:dev
 
-# Frontend (port 3017)
-cd frontend && npm install && npm run dev
-```
-
-## Demo
-
-```
-E-posta: demo@heritagetailors.com
-Şifre: demo123456
+# Frontend
+cd frontend && npm ci && npm run dev
 ```
 
 ## Provisioning
@@ -30,6 +29,8 @@ E-posta: demo@heritagetailors.com
 npm run provision
 ```
 
-## Lisans
+## Dokümantasyon
 
-Private — Autonomous Software Company
+- [PRD](docs/project/PRD.md)
+- [Deployment](docs/project/DEPLOYMENT.md)
+- [Design System](docs/project/DESIGN_SYSTEM.md)
