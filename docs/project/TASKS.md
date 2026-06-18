@@ -1,4 +1,4 @@
-# StitchPulse — Görevler (TASKS)
+# FramePulse — Görevler (TASKS)
 
 ## Tamamlanan
 
