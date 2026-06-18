@@ -1,16 +1,16 @@
 #!/usr/bin/env tsx
 /**
- * StitchPulse infrastructure provisioning orchestrator.
+ * FramePulse infrastructure provisioning orchestrator.
  * Idempotent — safe to run multiple times.
  */
 
-const GITHUB_REPO = process.env.GITHUB_REPO || 'gorkemkyolai06/stitchpulse';
+const GITHUB_REPO = process.env.GITHUB_REPO || 'gorkemkyolai06/framepulse';
 
 async function main() {
-  console.log('════════════════════════════════════════════════════════');
-  console.log('StitchPulse Infrastructure Provisioning');
+  console.log('══════════════════════════════════════════════════');
+  console.log('FramePulse Infrastructure Provisioning');
   console.log(`Repository: ${GITHUB_REPO}`);
-  console.log('════════════════════════════════════════════════════════');
+  console.log('══════════════════════════════════════════════════');
 
   const hasRailway = Boolean(process.env.RAILWAY_API_TOKEN);
   const hasVercelMcp = true; // Vercel MCP auth active in Cursor environment
