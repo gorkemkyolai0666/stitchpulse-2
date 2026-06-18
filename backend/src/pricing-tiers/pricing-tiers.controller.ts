@@ -11,14 +11,14 @@ import {
   Request,
   HttpCode,
 } from '@nestjs/common';
-import { QualityChecklistService } from './quality-checklists.service';
-import { CreateQualityChecklistDto, UpdateQualityChecklistDto } from './dto/quality-checklist.dto';
+import { PricingTiersService } from './pricing-tiers.service';
+import { CreatePricingTierDto, UpdatePricingTierDto } from './dto/pricing-tier.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-@Controller('quality-checklists')
+@Controller('pricing-tiers')
 @UseGuards(JwtAuthGuard)
-export class QualityChecklistController {
-  constructor(private qualityChecklistService: QualityChecklistService) {}
+export class PricingTiersController {
+  constructor(private pricingTiersService: PricingTiersService) {}
 
   @Get()
   list(
@@ -26,7 +26,7 @@ export class QualityChecklistController {
     @Query('page') page?: string,
     @Query('status') status?: string,
   ) {
-    return this.qualityChecklistService.list(req.user.framingShopId, {
+    return this.pricingTiersService.list(req.user.framingShopId, {
       page: page ? parseInt(page, 10) : undefined,
       status,
     });
@@ -34,29 +34,29 @@ export class QualityChecklistController {
 
   @Get(':id')
   get(@Request() req: { user: { framingShopId: string } }, @Param('id') id: string) {
-    return this.qualityChecklistService.get(req.user.framingShopId, id);
+    return this.pricingTiersService.get(req.user.framingShopId, id);
   }
 
   @Post()
   @HttpCode(201)
   create(
     @Request() req: { user: { framingShopId: string } },
-    @Body() dto: CreateQualityChecklistDto,
+    @Body() dto: CreatePricingTierDto,
   ) {
-    return this.qualityChecklistService.create(req.user.framingShopId, dto);
+    return this.pricingTiersService.create(req.user.framingShopId, dto);
   }
 
   @Patch(':id')
   update(
     @Request() req: { user: { framingShopId: string } },
     @Param('id') id: string,
-    @Body() dto: UpdateQualityChecklistDto,
+    @Body() dto: UpdatePricingTierDto,
   ) {
-    return this.qualityChecklistService.update(req.user.framingShopId, id, dto);
+    return this.pricingTiersService.update(req.user.framingShopId, id, dto);
   }
 
   @Delete(':id')
   remove(@Request() req: { user: { framingShopId: string } }, @Param('id') id: string) {
-    return this.qualityChecklistService.remove(req.user.framingShopId, id);
+    return this.pricingTiersService.remove(req.user.framingShopId, id);
   }
 }

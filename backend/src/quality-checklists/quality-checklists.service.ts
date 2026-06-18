@@ -6,10 +6,10 @@ import { CreateQualityChecklistDto, UpdateQualityChecklistDto } from './dto/qual
 export class QualityChecklistService {
   constructor(private prisma: PrismaService) {}
 
-  async list(tailoringShopId: string, params: { page?: number; status?: string }) {
+  async list(framingShopId: string, params: { page?: number; status?: string }) {
     const page = params.page || 1;
     const limit = 20;
-    const where: Record<string, unknown> = { tailoringShopId };
+    const where: Record<string, unknown> = { framingShopId };
     if (params.status) where.status = params.status;
 
     const [data, total] = await Promise.all([
@@ -25,26 +25,26 @@ export class QualityChecklistService {
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  async get(tailoringShopId: string, id: string) {
+  async get(framingShopId: string, id: string) {
     const maintenance = await this.prisma.qualityChecklist.findFirst({
-      where: { id, tailoringShopId },
+      where: { id, framingShopId },
     });
     if (!maintenance) throw new NotFoundException('Kort bakım kaydı bulunamadı');
     return maintenance;
   }
 
-  async create(tailoringShopId: string, dto: CreateQualityChecklistDto) {
+  async create(framingShopId: string, dto: CreateQualityChecklistDto) {
     return this.prisma.qualityChecklist.create({
       data: {
         ...dto,
-        tailoringShopId,
+        framingShopId,
         scheduledAt: new Date(dto.scheduledAt),
       },
     });
   }
 
-  async update(tailoringShopId: string, id: string, dto: UpdateQualityChecklistDto) {
-    await this.get(tailoringShopId, id);
+  async update(framingShopId: string, id: string, dto: UpdateQualityChecklistDto) {
+    await this.get(framingShopId, id);
     const data = { ...dto };
     if (dto.scheduledAt) {
       (data as { scheduledAt?: Date }).scheduledAt = new Date(dto.scheduledAt);
@@ -52,8 +52,8 @@ export class QualityChecklistService {
     return this.prisma.qualityChecklist.update({ where: { id }, data });
   }
 
-  async remove(tailoringShopId: string, id: string) {
-    await this.get(tailoringShopId, id);
+  async remove(framingShopId: string, id: string) {
+    await this.get(framingShopId, id);
     return this.prisma.qualityChecklist.delete({ where: { id } });
   }
 }

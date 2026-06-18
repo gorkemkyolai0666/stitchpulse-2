@@ -24,7 +24,7 @@ async function bootstrap() {
 
   const port = process.env.PORT || 4017;
   await app.listen(port);
-  console.log(`StitchPulse API running on port ${port}`);
+  console.log(`FramePulse API running on port ${port}`);
 }
 
 bootstrap();
